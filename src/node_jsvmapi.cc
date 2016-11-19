@@ -136,6 +136,9 @@ namespace v8impl {
   }
 
   static void WeakRefCallback(const v8::WeakCallbackData<v8::Value,int>& data) {
+    v8::Persistent<v8::Value> *thePersistent =
+        v8impl::V8PersistentValueFromJsWeakRefValue(reinterpret_cast<napi_weakref>(data.GetParameter()));
+    thePersistent->Reset();
   }
 
 //=== Conversion between V8 FunctionCallbackInfo and ===========================
@@ -722,9 +725,11 @@ napi_weakref napi_create_weakref(napi_env e, napi_value v) {
   v8::Persistent<v8::Value> *thePersistent =
       new v8::Persistent<v8::Value>(
           isolate, v8impl::V8LocalValueFromJsValue(v));
-  thePersistent->SetWeak(static_cast<int*>(NULL), v8impl::WeakRefCallback);
+
+  napi_weakref weakRef = v8impl::JsWeakRefFromV8PersistentValue(thePersistent);
+  thePersistent->SetWeak(reinterpret_cast<int*>(weakRef), v8impl::WeakRefCallback);
   // need to mark independent?
-  return v8impl::JsWeakRefFromV8PersistentValue(thePersistent);
+  return weakRef;
 }
 
 bool napi_get_weakref_value(napi_env e, napi_weakref w, napi_value* pv) {
@@ -744,7 +749,10 @@ bool napi_get_weakref_value(napi_env e, napi_weakref w, napi_value* pv) {
 void napi_release_weakref(napi_env e, napi_weakref w) {
   v8::Persistent<v8::Value> *thePersistent =
       v8impl::V8PersistentValueFromJsWeakRefValue(w);
-  thePersistent->Reset();
+  if (!thePersistent->IsEmpty())
+  {
+    thePersistent->Reset();
+  }
   delete thePersistent;
 }
 
