@@ -133,12 +133,106 @@ This NAPI API represents invoking `instanceof` Operator on the object
 as defined in [Section 12.10.4](https://tc39.github.io/ecma262/#sec-instanceofoperator)
 of the ECMAScript Language Specification.
 
+### *napi_is_array*
 
+#### Signature
 ```
-napi_is_array
-napi_is_arraybuffer
-napi_is_buffer
-napi_is_error
-napi_is_typedarray
-napi_strict_equals
+napi_status napi_is_array(napi_env e, napi_value value, bool* result)
 ```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to check
+- `[out] result`: Whether the given object is an array
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+#### Description
+This NAPI API represents invoking `IsArray` operation on the object 
+as defined in [Section 7.2.2](https://tc39.github.io/ecma262/#sec-isarray)
+of the ECMAScript Language Specification.
+
+### *napi_is_arraybuffer*
+
+#### Signature
+```
+napi_status napi_is_arraybuffer(napi_env e, napi_value value, bool* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to check
+- `[out] result`: Whether the given object is an ArrayBuffer
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_is_buffer*
+
+#### Signature
+```
+napi_status napi_is_buffer(napi_env e, napi_value value, bool* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to check
+- `[out] result`: Whether the given object is an napi representation of node:Buffer
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_is_error*
+
+#### Signature
+```
+napi_status napi_is_error(napi_env e, napi_value value, bool* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to check
+- `[out] result`: Whether the given `napi_value` represents an Error object
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_is_typedarray*
+
+#### Signature
+```
+napi_status napi_is_typedarray(napi_env e, napi_value value, bool* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to check
+- `[out] result`: Whether the given `napi_value` represents an TypedArray
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_strict_equals*
+
+#### Signature
+```
+napi_status napi_strict_equals(napi_env e,
+                               napi_value lhs,
+                               napi_value rhs,
+                               bool* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  lhs`: The JavaScript object to check
+- `[in]  rhs`: The JavaScript object to check against
+- `[out] result`: Whether the two `napi_value` objects are equal
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+#### Description
+This NAPI API represents the invocation of the strict equality algorithm 
+as defined in [Section 7.2.14](https://tc39.github.io/ecma262/#sec-strict-equality-comparison) 
+of the ECMAScript Language Specification.
