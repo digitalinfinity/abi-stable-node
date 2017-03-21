@@ -4,7 +4,7 @@ NAPI exposes a set of APIs to create fundamental JavaScript Objects.
 Some of these types are documented under [Section 6](https://tc39.github.io/ecma262/#sec-ecmascript-data-types-and-values) 
 of the [ECMAScript Language Specification](https://tc39.github.io/ecma262/).
 
- Fundamentally, these APIs are used to do one of the following:
+Fundamentally, these APIs are used to do one of the following:
 1. Create a new JavaScript object represented by `napi_value`
 2. Convert from a primitive C++ type to `napi_value`
 3. Convert from `napi_value` to a primitive C++ type
@@ -819,7 +819,3 @@ napi_status napi_get_value_uint32(napi_env e, napi_value v, uint32_t* result)
 #### Return value
 - `napi_ok` if the API succeeded.
 - `napi_number_expected` if a non-number `napi_value` is passed in
-
-
-
-
