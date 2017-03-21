@@ -1,0 +1,13 @@
+# NAPI Object Lifetime Management
+```
+napi_create_reference
+napi_close_escapable_handle_scope
+napi_close_handle_scope
+napi_delete_reference
+napi_escape_handle
+napi_get_reference_value
+napi_open_escapable_handle_scope
+napi_open_handle_scope
+napi_reference_addref
+#napi_reference_release
+```
