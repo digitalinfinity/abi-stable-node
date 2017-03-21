@@ -1,13 +1,13 @@
-# Abstract Operations (return napi objects or tell you the type)
+# NAPI - Abstract Operations 
 
-NAPI exposes a set of APIs to apply some abstract operations on Javascript Objects.
+NAPI exposes a set of APIs to apply some abstract operations on JavaScript Objects.
 Some of these operations are documented under [Section 7](https://tc39.github.io/ecma262/#sec-abstract-operations) 
 of the [ECMAScript Language Specification](https://tc39.github.io/ecma262/).
 
 These APIs allow you to do one of the following:
 1. Coerce JavaScript objects to fundamental JavaScript types
 2. Check the type of a JavaScript object
-3. Check for equality between two Javascript Objects
+3. Check for equality between two JavaScript Objects
 
 ## Functions
 

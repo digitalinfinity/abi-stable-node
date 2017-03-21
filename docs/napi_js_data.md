@@ -5,9 +5,14 @@ Some of these types are documented under [Section 6](https://tc39.github.io/ecma
 of the [ECMAScript Language Specification](https://tc39.github.io/ecma262/).
 
 Fundamentally, these APIs are used to do one of the following:
-1. Create a new JavaScript object represented by `napi_value`
-2. Convert from a primitive C++ type to `napi_value`
-3. Convert from `napi_value` to a primitive C++ type
+1. Create a new JavaScript object
+2. Convert from a primitive C++ type to NAPI value
+3. Convert from NAPI value to a primitive C++ type
+
+NAPI values are represented by the type `napi_value`.
+Any NAPI API that requires a JavaScript object takes in a `napi_value`
+however, it's the caller's responsibility to make sure that the 
+`napi_value` in question is of the JavaScript type expected by the API.
 
 ## Enum types
 
@@ -25,7 +30,7 @@ enum napi_valuetype {
   napi_object,
   napi_function,
   napi_external,
-};
+}
 ```
 
 #### Description
@@ -46,8 +51,8 @@ enum napi_typedarray_type {
   napi_int32,
   napi_uint32,
   napi_float32,
-  napi_float64,
-};
+  napi_float64
+}
 ```
 
 #### Description
@@ -60,7 +65,7 @@ Elements of this enum correspond to [Section 22.2 of the ECMAScript Language Spe
 
 #### Signature
 ```
-napi_status napi_create_array(napi_env e, napi_value* result);
+napi_status napi_create_array(napi_env e, napi_value* result)
 ```
 
 #### Parameters
@@ -79,7 +84,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_array(napi_env e, int length, napi_value* result);
+napi_status napi_create_array(napi_env e, int length, napi_value* result)
 ```
 
 #### Parameters
@@ -104,7 +109,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_arraybuffer(napi_env env, size_t byte_length, void** data, napi_value* result);
+napi_status napi_create_arraybuffer(napi_env env, size_t byte_length, void** data, napi_value* result)
 ```
 
 #### Parameters
@@ -133,7 +138,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_boolean(napi_env e, bool b, napi_value* result);
+napi_status napi_create_boolean(napi_env e, bool b, napi_value* result)
 ```
 
 #### Parameters
@@ -155,7 +160,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_buffer(napi_env e, size_t size, void** data, napi_value* result);
+napi_status napi_create_buffer(napi_env e, size_t size, void** data, napi_value* result)
 ```
 
 #### Parameters
@@ -175,7 +180,7 @@ Consider using typed arrays instead.
 
 #### Signature
 ```
-napi_status napi_create_buffer_copy(napi_env e, const void* data, size_t size, napi_value* result);
+napi_status napi_create_buffer_copy(napi_env e, const void* data, size_t size, napi_value* result)
 ```
 
 #### Parameters
@@ -196,7 +201,7 @@ arrays instead.
 
 #### Signature
 ```
-napi_status napi_create_external(napi_env e, void* data, napi_finalize finalize_cb, void* finalize_hint, napi_value* result);
+napi_status napi_create_external(napi_env e, void* data, napi_finalize finalize_cb, void* finalize_hint, napi_value* result)
 ```
 
 #### Parameters
@@ -225,7 +230,7 @@ napi_create_external_arraybuffer(napi_env env,
                                  size_t byte_length,
                                  napi_finalize finalize_cb,
                                  void* finalize_hint,
-                                 napi_value* result);
+                                 napi_value* result)
 ```
 
 #### Parameters
@@ -256,7 +261,7 @@ napi_status napi_create_external_buffer(napi_env e,
                                         void* data,
                                         napi_finalize finalize_cb,
                                         void* finalize_hint,
-                                        napi_value* result);
+                                        napi_value* result)
 ```
 
 #### Parameters
@@ -283,7 +288,7 @@ napi_status napi_create_function(napi_env e,
                                  const char* utf8name,
                                  napi_callback cb,
                                  void* data,
-                                 napi_value* result);
+                                 napi_value* result)
 ```
 
 #### Parameters
@@ -307,7 +312,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_number(napi_env e, double val, napi_value* result);
+napi_status napi_create_number(napi_env e, double val, napi_value* result)
 ```
 
 #### Parameters
@@ -328,7 +333,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_object(napi_env e, napi_value* result);
+napi_status napi_create_object(napi_env e, napi_value* result)
 ```
 
 #### Parameters
@@ -349,7 +354,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_string_utf16(napi_env e, const char16_t* s, int length, napi_value* result);
+napi_status napi_create_string_utf16(napi_env e, const char16_t* s, int length, napi_value* result)
 ```
 
 #### Parameters
@@ -371,7 +376,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_string_utf8(napi_env e, const char* s, int length, napi_value* result);
+napi_status napi_create_string_utf8(napi_env e, const char* s, int length, napi_value* result)
 ```
 
 #### Parameters
@@ -393,7 +398,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_string_utf8(napi_env e, const char* s, napi_value* result);
+napi_status napi_create_string_utf8(napi_env e, const char* s, napi_value* result)
 ```
 
 #### Parameters
@@ -448,7 +453,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_get_array_length(napi_env e, napi_value value, uint32_t* result);
+napi_status napi_get_array_length(napi_env e, napi_value value, uint32_t* result)
 ```
 
 #### Parameters
@@ -472,7 +477,7 @@ of the ECMAScript Language Specification.
 napi_status napi_get_arraybuffer_info(napi_env env,
                                       napi_value arraybuffer,
                                       void** data,
-                                      size_t* byte_length);
+                                      size_t* byte_length)
 ```
 
 #### Parameters
@@ -500,7 +505,7 @@ the ArrayBuffer.
 napi_status napi_get_buffer_info(napi_env e,
                                  napi_value value,
                                  void** data,
-                                 size_t* length);
+                                 size_t* length)
 ```
 
 #### Parameters

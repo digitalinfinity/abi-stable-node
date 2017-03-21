@@ -1,11 +1,232 @@
-# NAPI Function APIs to call back from JS
+# NAPI Function APIs 
+
+NAPI provides a set of APIs that allow Javascript code to 
+call back into native code. NAPI APIs that support calling back
+into Javascript take in callback function represented by 
+the `napi_callback` type. When the JavaScript VM calls back to
+native code, the `napi_callback` provided is invoked. The APIs 
+documented in this section allow the callback function to do the 
+following:
+- Get information about the context in which the callback was invoked
+- Get the arguments passed into the callback
+- Return a `napi_value` back from the callback
+
+Additionally, NAPI provides a set of functions which allow calling 
+JavaScript functions from native code. One can either call a function
+like a regular JavaScript function call, or as a constructor 
+function
+
+## Functions
+
+### *napi_call_function*
+
+#### Signature
 ```
-napi_get_cb_args
-napi_get_cb_data
-napi_get_cb_holder
-napi_get_cb_this
-napi_get_cb_args_length
-napi_get_cb_info
-napi_is_construct_call
-napi_set_return_value
+napi_status napi_call_function(napi_env e,
+                               napi_value recv,
+                               napi_value func,
+                               int argc,
+                               const napi_value* argv,
+                               napi_value* result)
 ```
+
+#### Parameters
+- `[in] e `: The environment that the API is invoked under
+- `[in]  recv`: The this object passed to the called function
+- `[in]  func`: `napi_value` representing the JavaScript function
+to be invoked
+- `[in]  argc`: The count of elements in the argv array
+- `[in]  argv`: Array of JavaScript objects as `napi_value` 
+representing the arguments to the function
+- `[out] result`: The JavaScript object representing the return 
+value from the function call
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_get_cb_args*
+
+#### Signature
+```
+napi_status napi_get_cb_args(napi_env e,
+                             napi_callback_info cbinfo,
+                             napi_value* buffer,
+                             int bufferlength)
+```
+
+#### Parameters
+- `[in] e`: The environment that the API is invoked under
+- `[in] cbinfo`: The callback info passed into the callback function
+- `[in] buffer`: Array of `napi_value` into which the arguments to the 
+callback function will be copied
+- `[in] bufferlength`: The size in elements in the buffer array
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_get_cb_data*
+
+#### Signature
+```
+napi_status napi_get_cb_data(napi_env e,
+                             napi_callback_info cbinfo,
+                             void** result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  cbinfo`: The callback info passed into the callback function
+- `[out] result`: The pointer to the `data` parameter that was passed
+in when the callback was initially installed
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_get_cb_holder*
+
+#### Signature
+```
+napi_status napi_get_cb_holder(napi_env e,
+                               napi_callback_info cbinfo,
+                               napi_value* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  cbinfo`: The callback info passed into the callback function
+- `[out] result`: The `napi_value` representing the instance of 
+the FunctionTemplate used to set up this callback.
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+#### Description
+Note: In many cases, this is the same as the this pointer, but it's
+not the same. This is a v8 specific API so it's likely a candidate 
+for removal.
+
+### *napi_get_cb_this*
+
+#### Signature
+```
+napi_status napi_get_cb_this(napi_env e,
+                             napi_callback_info cbinfo,
+                             napi_value* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  cbinfo`: The callback info passed into the callback function
+- `[out] result`: The `napi_value` representing the value of this 
+provided for the call to the function.
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_get_cb_args_length*
+
+#### Signature
+```
+napi_status napi_get_cb_this(napi_env e,
+                             napi_callback_info cbinfo,
+                             int* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  cbinfo`: The callback info passed into the callback function
+- `[out] result`: The number of actual arguments passed into the function
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_get_cb_info*
+
+#### Signature
+```
+napi_status napi_get_cb_info(napi_env e,
+                             napi_callback_info cbinfo,
+                             int* argc, 
+                             napi_value* argv,
+                             napi_value* thisArg, 
+                             void** data)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  cbinfo`: The callback info passed into the callback function
+- `[in-out] argc`: Specifies the size of the provided argv array
+and receives the actual count of args.
+- `[out] argv`: Buffer to which the `napi_value` representing the
+arguments are copied
+- `[out] this`: Receives the JS 'this' arg for the call
+- `[out] data`: Receives the data pointer for the callback.
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_is_construct_call*
+
+#### Signature
+```
+napi_status napi_is_construct_call(napi_env e,
+                                   napi_callback_info cbinfo,
+                                   bool* result)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  cbinfo`: The callback info passed into the callback function
+- `[out] result`: Whether the native function is being invoked as 
+a constructor call
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+### *napi_set_return_value*
+
+#### Signature
+```
+napi_status napi_set_return_value(napi_env e,
+                                  napi_callback_info cbinfo,
+                                  napi_value value)
+```
+
+#### Parameters
+- `[in]  e`: The environment that the API is invoked under
+- `[in]  cbinfo`: The callback info passed into the callback function
+- `[in]  value`: The value to return from the callback function
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
+```
+napi_call_function
+napi_new_instance
+napi_make_callback
+```
+
+### *napi_new_instance*
+
+#### Signature
+```
+napi_status napi_new_instance(napi_env e,
+                              napi_value cons,
+                              int argc,
+                              napi_value* argv,
+                              napi_value* result)
+```
+
+#### Parameters
+- `[in] e `: The environment that the API is invoked under
+- `[in]  cons`: `napi_value` representing the JavaScript function
+to be invoked as a constructor
+- `[in]  argc`: The count of elements in the argv array
+- `[in]  argv`: Array of JavaScript objects as `napi_value` 
+representing the arguments to the function
+- `[out] result`: The JavaScript object representing the return 
+value from the function call, which in this case is the constructed
+object
+
+#### Return value
+- `napi_ok` if the API succeeded.
