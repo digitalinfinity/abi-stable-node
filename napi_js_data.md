@@ -43,15 +43,15 @@ In addition to types in that section, `napi_value_type` also can represent Funct
 #### Definition
 ```
 enum napi_typedarray_type {
-  napi_int8,
-  napi_uint8,
-  napi_uint8_clamped,
-  napi_int16,
-  napi_uint16,
-  napi_int32,
-  napi_uint32,
-  napi_float32,
-  napi_float64
+  napi_int8_array,
+  napi_uint8_array,
+  napi_uint8_clamped_array,
+  napi_int16_array,
+  napi_uint16_array,
+  napi_int32_array,
+  napi_uint32_array,
+  napi_float32_array,
+  napi_float6_array4
 }
 ```
 
@@ -65,11 +65,11 @@ Elements of this enum correspond to [Section 22.2 of the ECMAScript Language Spe
 
 #### Signature
 ```
-napi_status napi_create_array(napi_env e, napi_value* result)
+napi_status napi_create_array(napi_env env, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the NAPI API is invoked under
+- `[in]  env`: The environment that the NAPI API is invoked under
 - `[out] result`: A `napi_value` representing a JavaScript Array
 
 #### Return value
@@ -77,18 +77,17 @@ napi_status napi_create_array(napi_env e, napi_value* result)
 
 #### Description
 This API returns a NAPI value corresponding to a JavaScript Array type. 
-JavaScript arrays are described in [Section 22.1](https://tc39.github.io/ecma262/#sec-array-objects) 
-of the ECMAScript Language Specification.
+JavaScript arrays are described in [Section 22.1](https://tc39.github.io/ecma262/#sec-array-objects) of the ECMAScript Language Specification.
 
 ### *napi_create_array_with_length*
 
 #### Signature
 ```
-napi_status napi_create_array(napi_env e, int length, napi_value* result)
+napi_status napi_create_array(napi_env env, size_t length, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  length`: The initial length of the Array
 - `[out] result`: A `napi_value` representing a JavaScript Array
 
@@ -113,7 +112,7 @@ napi_status napi_create_arraybuffer(napi_env env, size_t byte_length, void** dat
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  length`: The length in bytes of the array buffer to create
 - `[out] data`: Pointer to the underlying byte buffer of the ArrayBuffer
 - `[out] result`: A `napi_value` representing a JavaScript ArrayBuffer
@@ -134,37 +133,15 @@ object would need to be created.
 JavaScript ArrayBuffers are described in [Section 24.1](https://tc39.github.io/ecma262/#sec-arraybuffer-objects) 
 of the ECMAScript Language Specification.
 
-### *napi_create_boolean*
-
-#### Signature
-```
-napi_status napi_create_boolean(napi_env e, bool b, napi_value* result)
-```
-
-#### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  b`: Boolean value to convert to a `napi_value`
-- `[out] result`: A `napi_value` representing a JavaScript Boolean
-
-#### Return value
-- `napi_ok` if the API succeeded.
-
-#### Description
-This API returns a NAPI value corresponding to a JavaScript Boolean.
-It's used to convert from C++ boolean types to the corresponding JavaScript representation.
-
-JavaScript Booleans are described in [Section 19.3](https://tc39.github.io/ecma262/#sec-boolean-objects) 
-of the ECMAScript Language Specification.
-
 ### *napi_create_buffer*
 
 #### Signature
 ```
-napi_status napi_create_buffer(napi_env e, size_t size, void** data, napi_value* result)
+napi_status napi_create_buffer(napi_env env, size_t size, void** data, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  size`: Size in bytes of the underlying buffer
 - `[out] data`: Raw pointer to the underlying buffer
 - `[out] result`: A `napi_value` representing a node::Buffer
@@ -180,13 +157,14 @@ Consider using typed arrays instead.
 
 #### Signature
 ```
-napi_status napi_create_buffer_copy(napi_env e, const void* data, size_t size, napi_value* result)
+napi_status napi_create_buffer_copy(napi_env env, size_t length, const void* data, void** result_data, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  data`: Raw pointer to the underlying buffer to copy from
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  size`: Size in bytes of the input buffer (should be same as size of the new buffer)
+- `[in]  data`: Raw pointer to the underlying buffer to copy from
+- `[out] result_data`: Pointer to the new Buffer's underlying data buffer
 - `[out] result`: A `napi_value` representing a node::Buffer
 
 #### Return value
@@ -201,11 +179,11 @@ arrays instead.
 
 #### Signature
 ```
-napi_status napi_create_external(napi_env e, void* data, napi_finalize finalize_cb, void* finalize_hint, napi_value* result)
+napi_status napi_create_external(napi_env env, void* data, napi_finalize finalize_cb, void* finalize_hint, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  data`: Raw pointer to the external data being wrapped
 - `[in]  finalize_cb`: Optional callback to call when the wrapped object is being collected
 - `[in]  finalize_hint`: Optional hint to pass to the finalize callback during collection.
@@ -256,8 +234,8 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_external_buffer(napi_env e,
-                                        size_t size,
+napi_status napi_create_external_buffer(napi_env env,
+                                        size_t length,
                                         void* data,
                                         napi_finalize finalize_cb,
                                         void* finalize_hint,
@@ -265,8 +243,8 @@ napi_status napi_create_external_buffer(napi_env e,
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  size`: Size in bytes of the input buffer (should be same as size of the new buffer)
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  length`: Size in bytes of the input buffer (should be same as size of the new buffer)
 - `[in]  data`: Raw pointer to the underlying buffer to copy from
 - `[in]  finalize_cb`: Optional callback to call when the ArrayBuffer is being collected
 - `[in]  finalize_hint`: Optional hint to pass to the finalize callback during collection.
@@ -284,7 +262,7 @@ arrays instead.
 
 #### Signature
 ```
-napi_status napi_create_function(napi_env e,
+napi_status napi_create_function(napi_env env,
                                  const char* utf8name,
                                  napi_callback cb,
                                  void* data,
@@ -292,7 +270,7 @@ napi_status napi_create_function(napi_env e,
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  utf8name`: A string representing the name of the function encoded as utf8
 - `[in]  cb`: A function pointer to the native function to be invoked when the created function is invoked from JavaScript
 - `[in]  data`: Optional arbitrary context data to be passed in to the callback when the function is invoked
@@ -312,12 +290,12 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_number(napi_env e, double val, napi_value* result)
+napi_status napi_create_number(napi_env env, double value, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  val`: Double-precision value to be represented in JavaScript
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: Double-precision value to be represented in JavaScript
 - `[out] result`: A `napi_value` representing a JavaScript Number
 
 #### Return value
@@ -333,11 +311,11 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_object(napi_env e, napi_value* result)
+napi_status napi_create_object(napi_env env, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[out] result`: A `napi_value` representing a JavaScript Object
 
 #### Return value
@@ -347,19 +325,18 @@ napi_status napi_create_object(napi_env e, napi_value* result)
 This API allocates a default JavaScript Object. 
 It is the equivalent of doing `new Object()` in JavaScript.
 
-JavaScript Object type is described in [Section 6.1.7](https://tc39.github.io/ecma262/#sec-object-type) 
-of the ECMAScript Language Specification.
+JavaScript Object type is described in [Section 6.1.7](https://tc39.github.io/ecma262/#sec-object-type) of the ECMAScript Language Specification.
 
 ### *napi_create_string_utf16*
 
 #### Signature
 ```
-napi_status napi_create_string_utf16(napi_env e, const char16_t* s, int length, napi_value* result)
+napi_status napi_create_string_utf16(napi_env env, const char16_t* str, size_t length, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  s`: Character buffer representing a UTF16-LE encoded string
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  str`: Character buffer representing a UTF16-LE encoded string
 - `[in]  length`: The length of the string in characters, or -1 if it is null-terminated.
 - `[out] result`: A `napi_value` representing a JavaScript String
 
@@ -369,18 +346,17 @@ napi_status napi_create_string_utf16(napi_env e, const char16_t* s, int length, 
 #### Description
 This API creates a JavaScript String object from a UTF16-LE encoded C++ string
 
-JavaScript String type is described in [Section 6.1.4](https://tc39.github.io/ecma262/#sec-ecmascript-language-types-string-type) 
-of the ECMAScript Language Specification.
+JavaScript String type is described in [Section 6.1.4](https://tc39.github.io/ecma262/#sec-ecmascript-language-types-string-type) of the ECMAScript Language Specification.
 
 ### *napi_create_string_utf8*
 
 #### Signature
 ```
-napi_status napi_create_string_utf8(napi_env e, const char* s, int length, napi_value* result)
+napi_status napi_create_string_utf8(napi_env env, const char* str, size_t length, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  s`: Character buffer representing a utf8 encoded string
 - `[in]  length`: The length of the string in characters, or -1 if it is null-terminated.
 - `[out] result`: A `napi_value` representing a JavaScript String
@@ -391,19 +367,18 @@ napi_status napi_create_string_utf8(napi_env e, const char* s, int length, napi_
 #### Description
 This API creates a JavaScript String object from a utf8 encoded C++ string
 
-JavaScript String type is described in [Section 6.1.4](https://tc39.github.io/ecma262/#sec-ecmascript-language-types-string-type) 
-of the ECMAScript Language Specification.
+JavaScript String type is described in [Section 6.1.4](https://tc39.github.io/ecma262/#sec-ecmascript-language-types-string-type) of the ECMAScript Language Specification.
 
 ### *napi_create_symbol*
 
 #### Signature
 ```
-napi_status napi_create_string_utf8(napi_env e, const char* s, napi_value* result)
+napi_status napi_create_string_utf8(napi_env env, const char* description, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  s`: Null-terminated character buffer representing a utf8 encoded string
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  description`: Null-terminated character buffer representing a utf8 encoded string to describe the symbol
 - `[out] result`: A `napi_value` representing a JavaScript Symbol
 
 #### Return value
@@ -419,7 +394,7 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_create_typedarray(napi_env e,
+napi_status napi_create_typedarray(napi_env env,
                                    napi_typedarray_type type,
                                    size_t length,
                                    napi_value arraybuffer,
@@ -428,7 +403,7 @@ napi_status napi_create_typedarray(napi_env e,
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  type`: Scalar datatype of the elements within the TypedArray
 - `[in]  length`: Number of elements in the TypedArray
 - `[in]  arraybuffer`: ArrayBuffer underlying the typed array
@@ -453,11 +428,11 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_get_array_length(napi_env e, napi_value value, uint32_t* result)
+napi_status napi_get_array_length(napi_env env, napi_value value, uint32_t* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: napi_value representing the JavaScript Array whose length is being queried
 - `[out] result`: uint32 representing length of the array
 
@@ -498,18 +473,36 @@ the ArrayBuffer.
 
 <TODO: What happens to this buffer in case of a compacting GC?>
 
+### *napi_get_boolean*
+
+#### Signature
+```
+napi_status napi_get_boolean(napi_env env, bool value, napi_value* result)
+```
+
+#### Parameters
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: The value of the boolean to retrieve
+- `[out] result`: `napi_value` representing JavaScript Boolean singleton to retrieve
+
+#### Description
+This API is used to return the JavaScript singleton object that is used to represent the given boolean value
+
+#### Return value
+- `napi_ok` if the API succeeded.
+
 ### *napi_get_buffer_info*
 
 #### Signature
 ```
-napi_status napi_get_buffer_info(napi_env e,
+napi_status napi_get_buffer_info(napi_env env,
                                  napi_value value,
                                  void** data,
                                  size_t* length)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: napi_value representing the node::Buffer being queried
 - `[out] data`: The underlying data buffer of the node::Buffer
 - `[out] length`: Length in bytes of the underlying data buffer
@@ -520,29 +513,15 @@ napi_status napi_get_buffer_info(napi_env e,
 #### Description
 This API is used to retrieve the underlying data buffer of an node::Buffer and it's length.
 
-### *napi_get_false*
-
-#### Signature
-```
-napi_status napi_get_false(napi_env e, napi_value* result)
-```
-
-#### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[out] result`: `napi_value` representing JavaScript Boolean false
-
-#### Return value
-- `napi_ok` if the API succeeded.
-
 ### *napi_get_global*
 
 #### Signature
 ```
-napi_status napi_get_global(napi_env e, napi_value* result)
+napi_status napi_get_global(napi_env env, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[out] result`: `napi_value` representing JavaScript Global Object
 
 #### Return value
@@ -552,11 +531,11 @@ napi_status napi_get_global(napi_env e, napi_value* result)
 
 #### Signature
 ```
-napi_status napi_get_null(napi_env e, napi_value* result)
+napi_status napi_get_null(napi_env env, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[out] result`: `napi_value` representing JavaScript Null Object
 
 #### Return value
@@ -566,27 +545,13 @@ napi_status napi_get_null(napi_env e, napi_value* result)
 
 #### Signature
 ```
-napi_status napi_get_prototype(napi_env e, napi_value o, napi_value* result)
+napi_status napi_get_prototype(napi_env env, napi_value object, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  o`: `napi_value` representing JavaScript Object whose prototype to return
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  object`: `napi_value` representing JavaScript Object whose prototype to return
 - `[out] result`: `napi_value` representing prototype of the given object
-
-#### Return value
-- `napi_ok` if the API succeeded.
-
-### *napi_get_true*
-
-#### Signature
-```
-napi_status napi_get_true(napi_env e, napi_value* result)
-```
-
-#### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[out] result`: `napi_value` representing JavaScript Boolean true
 
 #### Return value
 - `napi_ok` if the API succeeded.
@@ -595,7 +560,7 @@ napi_status napi_get_true(napi_env e, napi_value* result)
 
 #### Signature
 ```
-napi_status napi_get_typedarray_info(napi_env e,
+napi_status napi_get_typedarray_info(napi_env env,
                                      napi_value typedarray,
                                      napi_typedarray_type* type,
                                      size_t* length,
@@ -605,7 +570,7 @@ napi_status napi_get_typedarray_info(napi_env e,
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  typedarray`: `napi_value` representing the TypedArray whose properties to query
 - `[out] type`: Scalar datatype of the elements within the TypedArray
 - `[out] length`: Number of elements in the TypedArray
@@ -623,11 +588,11 @@ Warning: This API is dangerous since the underlying data buffer is managed by th
 
 #### Signature
 ```
-napi_status napi_get_undefined(napi_env e, napi_value* result)
+napi_status napi_get_undefined(napi_env env, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[out] result`: `napi_value` representing JavaScript Undefined Object
 
 #### Return value
@@ -637,12 +602,12 @@ napi_status napi_get_undefined(napi_env e, napi_value* result)
 
 #### Signature
 ```
-napi_status napi_get_value_bool(napi_env e, napi_value v, bool* result)
+napi_status napi_get_value_bool(napi_env env, napi_value value, bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript Boolean
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: `napi_value` representing JavaScript Boolean
 - `[out] result`: C++ boolean primitive equivalent of the given JavaScript Boolean
 
 #### Return value
@@ -653,12 +618,12 @@ napi_status napi_get_value_bool(napi_env e, napi_value v, bool* result)
 
 #### Signature
 ```
-napi_status napi_get_value_double(napi_env e, napi_value v, double* result)
+napi_status napi_get_value_double(napi_env env, napi_value value, double* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript Number
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: `napi_value` representing JavaScript Number
 - `[out] result`: C++ double primitive equivalent of the given JavaScript Number
 
 #### Return value
@@ -669,12 +634,12 @@ napi_status napi_get_value_double(napi_env e, napi_value v, double* result)
 
 #### Signature
 ```
-napi_status napi_get_value_double(napi_env e, napi_value v, void** result)
+napi_status napi_get_value_external(napi_env env, napi_value value, void** result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript External Object
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: `napi_value` representing JavaScript External Object
 - `[out] result`: Pointer to the data wrapped by the JavaScript External Object
 
 #### Return value
@@ -685,12 +650,12 @@ napi_status napi_get_value_double(napi_env e, napi_value v, void** result)
 
 #### Signature
 ```
-napi_status napi_get_value_int32(napi_env e, napi_value v, int32_t* result)
+napi_status napi_get_value_int32(napi_env env, napi_value value, int32_t* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript Number
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: `napi_value` representing JavaScript Number
 - `[out] result`: C++ int32 primitive equivalent of the given JavaScript Number
 
 #### Return value
@@ -701,12 +666,12 @@ napi_status napi_get_value_int32(napi_env e, napi_value v, int32_t* result)
 
 #### Signature
 ```
-napi_status napi_get_value_int64(napi_env e, napi_value v, int64_t* result)
+napi_status napi_get_value_int64(napi_env env, napi_value value, int64_t* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript Number
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: `napi_value` representing JavaScript Number
 - `[out] result`: C++ int64 primitive equivalent of the given JavaScript Number
 
 #### Return value
@@ -717,35 +682,34 @@ napi_status napi_get_value_int64(napi_env e, napi_value v, int64_t* result)
 
 #### Signature
 ```
-napi_status napi_get_value_string_length(napi_env e, napi_value v, int* result)
+napi_status napi_get_value_string_length(napi_env env, napi_value value, int* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript string
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: `napi_value` representing JavaScript string
 - `[out] result`: Number of characters in the given JavaScript string
 
 #### Return value
 - `napi_ok` if the API succeeded.
 - `napi_string_expected` if a non-string `napi_value` is passed in
 
-### *napi_get_value_string_utf16*
+### *napi_get_value_string_utf8*
 
 #### Signature
 ```
-napi_status napi_get_value_string_utf8(napi_env e,
+napi_status napi_get_value_string_utf8(napi_env env,
                                        napi_value value,
-                                       char16_t* buf,
-                                       int bufsize,
-                                       int* result)
+                                       char* buf,
+                                       size_t bufsize,
+                                       size_t* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: `napi_value` representing JavaScript string
-- `[in]  buf`: Buffer to write the UTF16-LE encoded string into
-- `[in]  bufsize`: Size of the destination buffer. Use `napi_get_value_string_utf8_length` to 
-get the required size of the buffer.
+- `[in]  buf`: Buffer to write the UTF8 encoded string into. If NULL is passed in, the length of the string (in bytes) is returned
+- `[in]  bufsize`: Size of the destination buffer. 
 - `[out] result`: Number of bytes copied into the buffer including the null terminateor. 
 If the buffer size is insufficient, the string will be truncated including a null terminator.
 
@@ -757,35 +721,18 @@ If the buffer size is insufficient, the string will be truncated including a nul
 
 #### Signature
 ```
-napi_status napi_get_value_string_utf16_length(napi_env e, napi_value v, int* result)
+napi_status napi_get_value_string_utf16(napi_env env,
+                                        napi_value value,
+                                        char16_t* buf,
+                                        size_t bufsize,
+                                        size_t* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript string
-- `[out] result`: Number of UTF16-LE 2-byte code units in the given JavaScript string
-
-#### Return value
-- `napi_ok` if the API succeeded.
-- `napi_string_expected` if a non-string `napi_value` is passed in
-
-### *napi_get_value_string_utf8*
-
-#### Signature
-```
-napi_status napi_get_value_string_utf8(napi_env e,
-                                       napi_value value,
-                                       char* buf,
-                                       int bufsize,
-                                       int* result)
-```
-
-#### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: `napi_value` representing JavaScript string
-- `[in]  buf`: Buffer to write the utf8 encoded string into
-- `[in]  bufsize`: Size of the destination buffer. Use `napi_get_value_string_utf8_length` to 
-get the required size of the buffer.
+- `[in]  buf`: Buffer to write the UTF16-LE encoded string into. If NULL is passed in, the length of the string (in bytes) is returned
+- `[in]  bufsize`: Size of the destination buffer. 
 - `[out] result`: Number of bytes copied into the buffer including the null terminateor. 
 If the buffer size is insufficient, the string will be truncated including a null terminator.
 
@@ -793,32 +740,18 @@ If the buffer size is insufficient, the string will be truncated including a nul
 - `napi_ok` if the API succeeded.
 - `napi_string_expected` if a non-string `napi_value` is passed in
 
-### *napi_get_value_string_utf8_length*
 
-#### Signature
-```
-napi_status napi_get_value_string_utf8_length(napi_env e, napi_value v, int* result)
-```
-
-#### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript string
-- `[out] result`: Number of utf8 bytes in the given JavaScript string
-
-#### Return value
-- `napi_ok` if the API succeeded.
-- `napi_string_expected` if a non-string `napi_value` is passed in
 
 ### *napi_get_value_uint32*
 
 #### Signature
 ```
-napi_status napi_get_value_uint32(napi_env e, napi_value v, uint32_t* result)
+napi_status napi_get_value_uint32(napi_env env, napi_value value, uint32_t* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: `napi_value` representing JavaScript Number
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: `napi_value` representing JavaScript Number
 - `[out] result`: C++ uint32 primitive equivalent of the given JavaScript Number
 
 #### Return value

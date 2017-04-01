@@ -22,7 +22,7 @@ function
 
 #### Signature
 ```
-napi_status napi_call_function(napi_env e,
+napi_status napi_call_function(napi_env env,
                                napi_value recv,
                                napi_value func,
                                int argc,
@@ -48,10 +48,10 @@ value from the function call
 
 #### Signature
 ```
-napi_status napi_get_cb_args(napi_env e,
+napi_status napi_get_cb_args(napi_env env,
                              napi_callback_info cbinfo,
                              napi_value* buffer,
-                             int bufferlength)
+                             size_t bufferlength)
 ```
 
 #### Parameters
@@ -68,13 +68,13 @@ callback function will be copied
 
 #### Signature
 ```
-napi_status napi_get_cb_data(napi_env e,
+napi_status napi_get_cb_data(napi_env env,
                              napi_callback_info cbinfo,
                              void** result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  cbinfo`: The callback info passed into the callback function
 - `[out] result`: The pointer to the `data` parameter that was passed
 in when the callback was initially installed
@@ -82,40 +82,17 @@ in when the callback was initially installed
 #### Return value
 - `napi_ok` if the API succeeded.
 
-### *napi_get_cb_holder*
-
-#### Signature
-```
-napi_status napi_get_cb_holder(napi_env e,
-                               napi_callback_info cbinfo,
-                               napi_value* result)
-```
-
-#### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  cbinfo`: The callback info passed into the callback function
-- `[out] result`: The `napi_value` representing the instance of 
-the FunctionTemplate used to set up this callback.
-
-#### Return value
-- `napi_ok` if the API succeeded.
-
-#### Description
-Note: In many cases, this is the same as the this pointer, but it's
-not the same. This is a v8 specific API so it's likely a candidate 
-for removal.
-
 ### *napi_get_cb_this*
 
 #### Signature
 ```
-napi_status napi_get_cb_this(napi_env e,
+napi_status napi_get_cb_this(napi_env env,
                              napi_callback_info cbinfo,
                              napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  cbinfo`: The callback info passed into the callback function
 - `[out] result`: The `napi_value` representing the value of this 
 provided for the call to the function.
@@ -127,13 +104,13 @@ provided for the call to the function.
 
 #### Signature
 ```
-napi_status napi_get_cb_this(napi_env e,
-                             napi_callback_info cbinfo,
-                             int* result)
+napi_status napi_get_cb_args_length(napi_env env,
+                                    napi_callback_info cbinfo,
+                                    size_t* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  cbinfo`: The callback info passed into the callback function
 - `[out] result`: The number of actual arguments passed into the function
 
@@ -144,16 +121,16 @@ napi_status napi_get_cb_this(napi_env e,
 
 #### Signature
 ```
-napi_status napi_get_cb_info(napi_env e,
+napi_status napi_get_cb_info(napi_env env,
                              napi_callback_info cbinfo,
-                             int* argc, 
+                             size_t* argc, 
                              napi_value* argv,
                              napi_value* thisArg, 
                              void** data)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  cbinfo`: The callback info passed into the callback function
 - `[in-out] argc`: Specifies the size of the provided argv array
 and receives the actual count of args.
@@ -169,13 +146,13 @@ arguments are copied
 
 #### Signature
 ```
-napi_status napi_is_construct_call(napi_env e,
+napi_status napi_is_construct_call(napi_env env,
                                    napi_callback_info cbinfo,
                                    bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  cbinfo`: The callback info passed into the callback function
 - `[out] result`: Whether the native function is being invoked as 
 a constructor call
@@ -187,38 +164,32 @@ a constructor call
 
 #### Signature
 ```
-napi_status napi_set_return_value(napi_env e,
+napi_status napi_set_return_value(napi_env env,
                                   napi_callback_info cbinfo,
                                   napi_value value)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  cbinfo`: The callback info passed into the callback function
 - `[in]  value`: The value to return from the callback function
 
 #### Return value
 - `napi_ok` if the API succeeded.
 
-```
-napi_call_function
-napi_new_instance
-napi_make_callback
-```
-
 ### *napi_new_instance*
 
 #### Signature
 ```
-napi_status napi_new_instance(napi_env e,
+napi_status napi_new_instance(napi_env env,
                               napi_value cons,
-                              int argc,
+                              size_t argc,
                               napi_value* argv,
                               napi_value* result)
 ```
 
 #### Parameters
-- `[in] e `: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  cons`: `napi_value` representing the JavaScript function
 to be invoked as a constructor
 - `[in]  argc`: The count of elements in the argv array

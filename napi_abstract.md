@@ -15,12 +15,12 @@ These APIs allow you to do one of the following:
 
 #### Signature
 ```
-napi_status napi_coerce_to_bool(napi_env e, napi_value v, napi_value* result)
+napi_status napi_coerce_to_bool(napi_env env, napi_value value, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: The JavaScript object to coerce
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to coerce
 - `[out] result`: `napi_value` representing the coerced JavaScript Boolean
 
 #### Return value
@@ -35,12 +35,12 @@ This API can be re-entrant if getters are defined on the passed in Object.
 
 #### Signature
 ```
-napi_status napi_coerce_to_number(napi_env e, napi_value v, napi_value* result)
+napi_status napi_coerce_to_number(napi_env env, napi_value value, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: The JavaScript object to coerce
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to coerce
 - `[out] result`: `napi_value` representing the coerced JavaScript Number
 
 #### Return value
@@ -55,12 +55,12 @@ This API can be re-entrant if getters are defined on the passed in Object.
 
 #### Signature
 ```
-napi_status napi_coerce_to_object(napi_env e, napi_value v, napi_value* result)
+napi_status napi_coerce_to_object(napi_env env, napi_value value, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: The JavaScript object to coerce
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to coerce
 - `[out] result`: `napi_value` representing the coerced JavaScript Object
 
 #### Return value
@@ -75,12 +75,12 @@ This API can be re-entrant if getters are defined on the passed in Object.
 
 #### Signature
 ```
-napi_status napi_coerce_to_string(napi_env e, napi_value v, napi_value* result)
+napi_status napi_coerce_to_string(napi_env env, napi_value value, napi_value* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  v`: The JavaScript object to coerce
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object to coerce
 - `[out] result`: `napi_value` representing the coerced JavaScript String
 
 #### Return value
@@ -91,16 +91,16 @@ This NAPI API implements the abstract operation ToString as defined in [Section 
 of the ECMAScript Language Specification.
 This API can be re-entrant if getters are defined on the passed in Object.
 
-### *napi_get_type_of_value*
+### *napi_typeof*
 
 #### Signature
 ```
-napi_status napi_get_type_of_value(napi_env e, napi_value vv, napi_valuetype* result)
+napi_status napi_typeof(napi_env env, napi_value value, napi_valuetype* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  vv`: The JavaScript object whose type to query
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  value`: The JavaScript object whose type to query
 - `[out] result`: The type of the JavaScript object
 
 #### Return value
@@ -116,14 +116,14 @@ However, it has support for detecting External objects, and also defaults to `na
 
 #### Signature
 ```
-napi_status napi_instanceof(napi_env e, napi_value o, napi_value c, bool* result)
+napi_status napi_instanceof(napi_env env, napi_value object, napi_value constructor, bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
-- `[in]  o`: The JavaScript object to check
-- `[in]  c`: The JavaScript object to check against
-- `[out] result`: Whether `o instanceof c` is true.
+- `[in]  env`: The environment that the API is invoked under
+- `[in]  object`: The JavaScript object to check
+- `[in]  constructor`: The JavaScript function object of the constructor function to check against
+- `[out] result`: Whether `object instanceof constructor` is true.
 
 #### Return value
 - `napi_ok` if the API succeeded.
@@ -137,11 +137,11 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_is_array(napi_env e, napi_value value, bool* result)
+napi_status napi_is_array(napi_env env, napi_value value, bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: The JavaScript object to check
 - `[out] result`: Whether the given object is an array
 
@@ -157,11 +157,11 @@ of the ECMAScript Language Specification.
 
 #### Signature
 ```
-napi_status napi_is_arraybuffer(napi_env e, napi_value value, bool* result)
+napi_status napi_is_arraybuffer(napi_env env, napi_value value, bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: The JavaScript object to check
 - `[out] result`: Whether the given object is an ArrayBuffer
 
@@ -172,11 +172,11 @@ napi_status napi_is_arraybuffer(napi_env e, napi_value value, bool* result)
 
 #### Signature
 ```
-napi_status napi_is_buffer(napi_env e, napi_value value, bool* result)
+napi_status napi_is_buffer(napi_env env, napi_value value, bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: The JavaScript object to check
 - `[out] result`: Whether the given object is an napi representation of node:Buffer
 
@@ -187,11 +187,11 @@ napi_status napi_is_buffer(napi_env e, napi_value value, bool* result)
 
 #### Signature
 ```
-napi_status napi_is_error(napi_env e, napi_value value, bool* result)
+napi_status napi_is_error(napi_env env, napi_value value, bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: The JavaScript object to check
 - `[out] result`: Whether the given `napi_value` represents an Error object
 
@@ -202,11 +202,11 @@ napi_status napi_is_error(napi_env e, napi_value value, bool* result)
 
 #### Signature
 ```
-napi_status napi_is_typedarray(napi_env e, napi_value value, bool* result)
+napi_status napi_is_typedarray(napi_env env, napi_value value, bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  value`: The JavaScript object to check
 - `[out] result`: Whether the given `napi_value` represents an TypedArray
 
@@ -217,14 +217,14 @@ napi_status napi_is_typedarray(napi_env e, napi_value value, bool* result)
 
 #### Signature
 ```
-napi_status napi_strict_equals(napi_env e,
+napi_status napi_strict_equals(napi_env env,
                                napi_value lhs,
                                napi_value rhs,
                                bool* result)
 ```
 
 #### Parameters
-- `[in]  e`: The environment that the API is invoked under
+- `[in]  env`: The environment that the API is invoked under
 - `[in]  lhs`: The JavaScript object to check
 - `[in]  rhs`: The JavaScript object to check against
 - `[out] result`: Whether the two `napi_value` objects are equal
